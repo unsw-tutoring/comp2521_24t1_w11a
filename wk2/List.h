@@ -9,7 +9,7 @@ typedef struct node {
 	int data;
 	struct node *next;
 } Node;
-typedef Node *List;
+typedef struct node *List;
 
 // create a new empty list
 List ListNew();

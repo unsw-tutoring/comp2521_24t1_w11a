@@ -33,17 +33,19 @@ List ListAdd(List l, int val) {
 // delete the first item with value 'val' from list -- recursively
 // if 'val' is not in the list, do nothing
 // returns the head of the new linked list
-List ListDelete(List l, int val) {
-	// base cases
-	// if list is empty
+struct node *ListDelete(struct node *l, int val) {
 	if (l == NULL) return NULL;
-	// if node to delete is first value
+	// if head is value to delete
 	if (l->data == val) {
-		List restOfList = l->next;
+		struct node *newHead = l->next;
 		free(l);
-		return restOfList;
+		return newHead;
 	}
-	l->next = ListDelete(l->next, val);
+
+	// i can safely assume that l != NULL AND l->data != val
+
+	struct node *newHeadOfRestOfList = ListDelete(l->next, val);
+	l->next = newHeadOfRestOfList;
 	return l;
 }
 
@@ -83,8 +85,14 @@ int ListCountEvens(List l) {
 
 // check if list is sorted in non-descending order
 bool ListIsSorted(List l) {
-	// TODO:
-	return false;
+	if (l == NULL || l->next == NULL) return true;
+
+	// bool restOfListSorted = ListIsSorted(l->next);
+	// if (!restOfListSorted) return false;
+	// if (l->data > l->next->data) return false;
+	// return true; // where l->data <= l->next->data and restOfListSorted
+
+	return (l->data <= l->next->data) && ListIsSorted(l->next);
 }
 
 // ! THE FOLLOWING TWO EXAMPLES SHOW TWO COMMON TRICKS / TECHNIQUES YOU CAN
@@ -92,14 +100,28 @@ bool ListIsSorted(List l) {
 
 // multiply each element in the list by it's position
 // e.g. 1st node gets multiplied by 1, 2nd node get multiplied by 2, etc.
-void ListTransform(List l) {
-	// TODO
-	return;
+void doListTransform(struct node *l, int position) {
+	if (l == NULL) return;
+
+	l->data *= position;
+	doListTransform(l->next, position + 1);
+}
+
+void ListTransform(struct node *l) {
+	doListTransform(l, 1);
 }
 
 // multiply each element in the list by it's position
 // e.g. 1st node gets multiplied by 1, 2nd node get multiplied by 2, etc.
+void doListTransformAlternate(struct node *l, int *position) {
+	if (l == NULL) return;
+
+	l->data *= (*position);
+	(*position)++;
+	doListTransformAlternate(l, position);
+}
+
 void ListTransformAlternate(List l) {
-	// TODO
-	return;
+	int position = 1;
+	doListTransformAlternate(l, &position);
 }
